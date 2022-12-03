@@ -9,6 +9,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestBlockHash(t *testing.T) {
+	b := &Block{
+		Header: Header{
+			Version:   1,
+			PrevBlock: types.RandomHash(),
+			Timestamp: time.Now().UnixNano(),
+			Height:    10,
+			Nonce:     31337,
+		},
+		Transactions: nil,
+	}
+	h := b.Hash()
+	assert.False(t, h.IsZero())
+}
 func TestHeader_Encode_Decode(t *testing.T) {
 	h := &Header{
 		Version:   1,
