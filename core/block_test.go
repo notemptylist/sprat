@@ -30,14 +30,15 @@ func TestSignBlock(t *testing.T) {
 }
 func TestVerifyBlock(t *testing.T) {
 	privkey := crypto.GeneratePrivateKey()
-	b := randomBlock(0)
+	b := randomBlock(101)
 	assert.Nil(t, b.Sign(privkey))
 	assert.Equal(t, b.Validator, privkey.PublicKey())
+	assert.Nil(t, b.Verify())
 
 	otherkey := crypto.GeneratePrivateKey()
 	b.Validator = otherkey.PublicKey()
 	assert.NotNil(t, b.Verify())
 
-	b.Height = 100
-	assert.NotNil(t, b.Verify())
+	// b.Height = 100
+	// assert.Nil(t, b.Verify())
 }
