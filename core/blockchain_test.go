@@ -35,4 +35,6 @@ func TestAddBlock(t *testing.T) {
 
 	assert.True(t, bc.HasBlock(uint32(lenBlocks)))
 	assert.Equal(t, bc.Height(), uint32(lenBlocks))
+	assert.False(t, bc.HasBlock(uint32(lenBlocks+1)))
+	assert.NotNil(t, bc.AddBlock(randomBlock(80)))
 }
