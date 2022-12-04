@@ -21,6 +21,9 @@ func (v *BlockValidator) ValidateBlock(b *Block) error {
 		return fmt.Errorf("Chain already has block (%d) with has (%s)", b.Height, b.Hash(BlockHasher{}))
 	}
 
+	if b.Height != v.bc.Height()+1 {
+		return fmt.Errorf("Block (%s) too high", b.Hash(BlockHasher{}))
+	}
 	if err := b.Verify(); err != nil {
 		return err
 	}

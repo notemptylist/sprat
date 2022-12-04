@@ -38,3 +38,10 @@ func TestAddBlock(t *testing.T) {
 	assert.False(t, bc.HasBlock(uint32(lenBlocks+1)))
 	assert.NotNil(t, bc.AddBlock(randomBlock(80)))
 }
+
+func TestAddBlockTooHigh(t *testing.T) {
+	bc := makeBlockchain(t)
+	assert.Equal(t, bc.Height(), uint32(0))
+	assert.NotNil(t, bc.AddBlock(randomSignedBlock(t, 3)))
+
+}
