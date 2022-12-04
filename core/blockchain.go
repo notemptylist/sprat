@@ -25,11 +25,14 @@ func (bc *Blockchain) Height() uint32 {
 }
 
 func (bc *Blockchain) AddBlock(b *Block) error {
-	return nil
+	if err := bc.validator.ValidateBlock(b); err != nil {
+		return err
+	}
+	return bc.addBlockWithoutValidation(b)
 }
 
 func (bc *Blockchain) HasBlock(height uint32) bool {
-	return height < bc.Height()
+	return height <= bc.Height()
 }
 
 func (bc *Blockchain) addBlockWithoutValidation(b *Block) error {
