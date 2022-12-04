@@ -41,6 +41,10 @@ func NewBlock(h *Header, txx []Transaction) *Block {
 	}
 }
 
+func (b *Block) AddTransaction(tx *Transaction) {
+	b.Transactions = append(b.Transactions, *tx)
+}
+
 func (b *Block) Sign(privKey crypto.PrivateKey) error {
 	sig, err := privKey.Sign(b.Header.Bytes())
 	if err != nil {
@@ -59,18 +63,14 @@ func (b *Block) Verify() error {
 	if !b.Signature.Verify(b.Validator, b.Header.Bytes()) {
 		return fmt.Errorf("Block has invalid signature")
 	}
+
+	for _, tx := range b.Transactions {
+		if err := tx.Verify(); err != nil {
+			return err
+		}
+	}
 	return nil
 }
-
-// func (b *Block) HeaderData() []byte {
-
-// 	buf := &bytes.Buffer{}
-// 	enc := gob.NewEncoder(buf)
-// 	enc.Encode(b.Header)
-
-// 	return buf.Bytes()
-
-// }
 
 func (b *Block) Hash(hasher Hasher[*Header]) types.Hash {
 	if b.hash.IsZero() {

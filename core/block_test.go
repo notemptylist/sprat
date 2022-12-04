@@ -16,11 +16,7 @@ func randomBlock(height uint32, prevBlockHash types.Hash) *Block {
 		Height:        height,
 		Timestamp:     time.Now().UnixNano(),
 	}
-	tx := Transaction{
-		Data: []byte("random"),
-	}
-
-	return NewBlock(header, []Transaction{tx})
+	return NewBlock(header, []Transaction{})
 }
 
 func randomSignedBlock(t *testing.T, height uint32, prevBlockHash types.Hash) *Block {
@@ -30,6 +26,8 @@ func randomSignedBlock(t *testing.T, height uint32, prevBlockHash types.Hash) *B
 	b := randomBlock(height, prevBlockHash)
 	b.Sign(privkey)
 	assert.Nil(t, b.Sign(privkey))
+	tx := randomTxWithSignature(t)
+	b.AddTransaction(tx)
 	return b
 }
 func TestSignBlock(t *testing.T) {

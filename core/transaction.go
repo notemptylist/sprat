@@ -10,7 +10,7 @@ import (
 type Transaction struct {
 	Data []byte // Arbitrary data
 
-	PublicKey crypto.PublicKey
+	Sender    crypto.PublicKey
 	Signature *crypto.Signature
 }
 
@@ -20,7 +20,7 @@ func (tx *Transaction) Sign(privKey crypto.PrivateKey) error {
 		return err
 	}
 
-	tx.PublicKey = privKey.PublicKey()
+	tx.Sender = privKey.PublicKey()
 	tx.Signature = sig
 	return nil
 }
@@ -30,7 +30,7 @@ func (tx *Transaction) Verify() error {
 		return fmt.Errorf("tx has no signature")
 	}
 
-	if tx.Signature.Verify(tx.PublicKey, tx.Data) == false {
+	if tx.Signature.Verify(tx.Sender, tx.Data) == false {
 		return fmt.Errorf("Invalid transaction signature")
 	}
 	return nil
