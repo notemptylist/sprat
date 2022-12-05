@@ -1,11 +1,15 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type Blockchain struct {
-	store     Storage
-	headers   []*Header
-	validator Validator
+	store      Storage
+	headerLock sync.RWMutex
+	headers    []*Header
+	validator  Validator
 }
 
 func NewBlockchain(genesis *Block) (*Blockchain, error) {
@@ -23,6 +27,8 @@ func (bc *Blockchain) SetValidator(v Validator) {
 
 func (bc *Blockchain) Height() uint32 {
 	//validate
+	bc.headerLock.RLock()
+	defer bc.headerLock.RUnlock()
 	return uint32(len(bc.headers) - 1)
 }
 
@@ -38,15 +44,17 @@ func (bc *Blockchain) HasBlock(height uint32) bool {
 }
 
 func (bc *Blockchain) addBlockWithoutValidation(b *Block) error {
+	bc.headerLock.Lock()
+	defer bc.headerLock.Unlock()
 	bc.headers = append(bc.headers, b.Header)
-	fmt.Printf("Added block with hash{%s} height{%d}\n", b.Hash(BlockHasher{}), b.Height)
 	return bc.store.Put(b)
 }
 
 func (bc *Blockchain) GetHeader(height uint32) (*Header, error) {
-
 	if height > bc.Height() {
 		return nil, fmt.Errorf("Requested header height (%d) too high", height)
 	}
+	bc.headerLock.Lock()
+	defer bc.headerLock.Unlock()
 	return bc.headers[height], nil
 }

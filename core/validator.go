@@ -35,6 +35,7 @@ func (v *BlockValidator) ValidateBlock(b *Block) error {
 		return fmt.Errorf("prev header hash doesn't match")
 	}
 
+	// Verify the block and all of its transactions
 	if err := b.Verify(); err != nil {
 		return err
 	}
