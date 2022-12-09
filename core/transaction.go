@@ -15,6 +15,8 @@ type Transaction struct {
 	Signature *crypto.Signature
 
 	hash types.Hash
+	// a timestamp of when this transaction was first encountered locally
+	firstSeen int64
 }
 
 func NewTransaction(data []byte) *Transaction {
@@ -49,6 +51,13 @@ func (tx *Transaction) Verify() error {
 		return fmt.Errorf("Invalid transaction signature")
 	}
 	return nil
+}
+
+func (tx *Transaction) SetFirstSeen(t int64) {
+	tx.firstSeen = t
+}
+func (tx *Transaction) GetFirstSeen() int64 {
+	return tx.firstSeen
 }
 func (tx *Transaction) DecodeBinary(r io.Reader) error { return nil }
 func (tx *Transaction) EncodeBinary(w io.Writer) error { return nil }
